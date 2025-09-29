@@ -1,0 +1,11 @@
+[Unit]
+Description=3NWeb server
+After=network.target
+
+[Service]
+Type=forking
+# systemd will capture
+ExecStart=sh -c "3nweb run --config /etc/3nweb/conf.yaml & "
+
+[Install]
+WantedBy=multi-user.target

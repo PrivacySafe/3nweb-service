@@ -11,12 +11,12 @@ We use implementation published as `spec-3nweb-server` [npm package](https://www
 - Spec Server: Using implementation from `spec-3nweb-server` npm package.
 - For Docker: image(s), scripts, setting.
 - For systemd: service file, etc.
-- Dedicated VPS scenario.
+- Dedicated VPS or Incus/LXC container scenario.
 
 
 ## Intro
 
-3NWeb is a set of protocol that provides basic utility functionality needed to build multi-device environment with modern apps and UX. Current set contains:
+3NWeb is a set of protocols that provides server-side support for building user-controlled multi-device environment with modern apps and UX. Current set of utility protocols contains:
 - ASMail - for messaging, passing encrypted blobs.
 - 3NStorage - for storing and sharing encrypted blobs.
 - MailerId - non-tracking identity provider.
@@ -59,7 +59,7 @@ Then for each service user's domain `example.org` should have following TXT reco
 - `3nstorage=stockage.exemple.fr:7070/quebec` for 3NStorage
 - `mailerid=esempio.it/mailerid` for MailerId
 
-All three records have same pattern: `<service>=<domain>[:port][/path]`. Same or different domains in records, optional port and path allow to place services on same box, under the same proxy, or on different ends of the planet -- all options are open. DNS is not restricting how services can be set up.
+All three records have same pattern: `<service>=<domain>[:port][/path]`, giving maximum flexibility. Services can come from same or different domains, optional port and path allow to place services on same box, under the same proxy -- all options are open. DNS is not restricting how services can be set up.
 
 Going more specific, [`spec-3nweb-server`](https://www.npmjs.com/package/spec-3nweb-server) implementation, used below, can run all three services. Each service exists under respective prefix path: `/asmail/`, `/3nstorage/`, `/mailerid/`. And when `spec-3nweb-server` is setup to run all three services at `https://exemple.quebec:7070/`, users' domain `example.com` needs following TXT records:
 - `asmail=exemple.quebec:7070/asmail` for ASMail
@@ -102,7 +102,7 @@ enabledServices:
   mailerId: true
 ```
 
-`domain` text field tells running process under from what domain it operates, how clients see it. When users connect to their asmail and storage services, they use MailerId process to login. Server embeds own domain into the assertion so that it can't be reused. For example:
+`domain` text field tells running process under from what domain it operates, how clients see it. When users connect to their asmail and storage services, they use MailerId process to login, and service's domain is embedded into assertions to guard against reuse. For example:
 ```yaml
 domain: service-for.example.com
 ```
@@ -205,11 +205,11 @@ docker exec -i -t 3nweb_services bash
 Copy service file to `/etc/systemd/system/` (or where it should be on your linux) and control it with `systemctl` ([some tutorial](https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units)).
 
 
-## Scenario: dedicated VPS
+## Scenario: dedicated VPS or Incus/LXC container
 
 With the above background we can tackle specific scenarios. For example:
 - need to provide service to users at `example.com` domain,
-- using a dedicated VPS, available at `vps.esempio.it` domain for all three services.
+- using a dedicated VPS, or Incus/LXC container with linux system inside, available at `vps.esempio.it` domain with all three services.
 
 We can skip Docker's machinery in a dedicated system and:
 1. install NodeJS with npm, following [their instructions](https://nodejs.org/en/download);

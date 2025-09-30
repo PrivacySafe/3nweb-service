@@ -39,7 +39,7 @@ To roll out 3NWeb services today for your domain do these:
 - run minimal test from cli
 - setup DNS TXT records on user domain(s) to point to your server
 - set signup parameters on server
-- download [PrivacySafe client platform](https://download.privacysafe.app/), create user, testing signup
+- download [PrivacySafe client platform](https://download.privacysafe.app/), create user, testing signup (watch for propagation of DNS)
 - instruct others to download [PrivacySafe](https://download.privacysafe.app/) and give them respetive token to create accounts
 
 Let's cover DNS setup first, and then cover possible server setup scenarios.
@@ -271,3 +271,5 @@ with file `/etc/3nweb/no-token-signup.json` being:
   "domains": [ "example.com" ]
 }
 ```
+
+In initial testing, watch for `service-locating` error with `noServiceRecord` flag, which is a result of DNS data not propagated, and older info being in DNS caches.
